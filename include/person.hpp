@@ -16,7 +16,7 @@ struct PersonHash
 	}
 };
 bool operator==(const person & left, const person & right) {
-	return left.name == right.name && left.surname == right.surname && left.surname == right.surname;
+	return left.name == right.name && left.surname == right.surname && left.year == right.year;
 }
 std::ostream & operator<<(std::ostream & output, person const & _person)
 {

@@ -1,43 +1,49 @@
 #include <string>
-struct person 
-{
-	std::string surname;
-	std::string name;
-	std::string year;
-};
-struct PersonHash 
-{
-	std::size_t operator()(person const & s) const
-	{
-		std::size_t h1 = std::hash<std::string>{}(s.surname);
-		std::size_t h2 = std::hash<std::string>{}(s.name);
-		std::size_t h3 = std::hash<std::string>{}(s.year);
-		return h1 ^ ((h2 ^ (h3 << 1)) << 1); // or use boost::hash_combine
+const size_t n_literals = 27;
+size_t letterI(const char letter, const bool is_capital) {
+	int first_letter_code = static_cast<int>(is_capital ? 'A' : 'a');
+	size_t result = static_cast<int>(letter) - first_letter_code + 1;
+	return result;
+}
+struct person {
+	char * str;
+	unsigned char name_i;
+	unsigned char name_length;
+        person() : str(nullptr) {
+               ;
+        }
+	size_t i(size_t sort_i) const {
+		if (sort_i < name_length) {
+			return letterI(str[name_i + sort_i], sort_i == 0);
+		}
+		else {
+			return 0;
+		}
+	}
+	char * getName() {
+		char * temp = new char[name_length + 1];
+		strncpy(temp, &(str[name_i]), name_length);
+		temp[name_length] = '\0';
+		return temp;
+	} //Boost
+        void putStr(std::string const & _str) {
+                str = new char[_str.length() + 1];
+		strncpy(str, _str, _str.length());
+		str[_str.length()] = '\0';
+        }
+	~person() {
+		delete[] str;
 	}
 };
-bool operator==(const person & left, const person & right) {
-	return left.name == right.name && left.surname == right.surname && left.year == right.year;
-}
 std::ostream & operator<<(std::ostream & output, person const & _person)
 {
-	output << _person.surname << " ";
-	output << _person.name << " ";
-	output << _person.year;
+	output << _person.str << " ";
 	return output;
 }
 std::istream & operator>>(std::istream & input, person & _person)
 {
-	input >> _person.surname;
-	input >> _person.name;
-	input >> _person.year;
+	input >> _person.str;
+	/*input >> _person.name;
+	input >> _person.year;*/
 	return input;
-}
-person readPersonFromFile(std::string file_name, size_t index) {
-	person result;
-	std::ifstream file(file_name);
-	for (size_t i = 0; i < index + 1; i++) {
-		file >> result;
-	}
-	file.close();
-	return result;
 }
